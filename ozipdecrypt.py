@@ -1,3 +1,5 @@
+#(c) B. Kerler 2017-2018, licensed under MIT license
+
 import os
 import sys
 import binascii
@@ -5,9 +7,13 @@ from Crypto.Cipher import AES
 
 keys=[
         "2143DCCB21513E39E1DCAFD41ACEDBD7",
-        "2D23CCBBA1563519CE23C1C4AA1E3412",
+        "2D23CCBBA1563519CE23C1C4AA1E3412", #A77
         "1E38C1B72D522E29E0D4ACD50ACFDCD6",
-        "D6DCCF0AD5ACD4E0292E522DB7C1381E"
+        "D7DBCE1AD4AFDCE1393E5121CBDC4321", #R11s, Plus
+        "D6DCCF0AD5ACD4E0292E522DB7C1381E", #R9s, Plus, R11
+        "12341EAAC4C123CE193556A1BBCC232D",
+        "D4D2CD61D4AFDCE13B5E01221BD14D20", #FindX
+        "261CC7131D7C1481294E532DB752381E"  #FindX
       ]
 
 def keytest(data):
@@ -20,7 +26,7 @@ def keytest(data):
     return -1
 
 def main():
-    print ("ozipdecrypt 0.1 (c) B.Kerler 2017")
+    print ("ozipdecrypt 0.2 (c) B.Kerler 2017-2018")
     if (len(sys.argv)!=2):
         print ("usage: ozipdecrypt.py [*.ozip]")
         exit(1)
