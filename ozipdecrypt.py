@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #(c) B. Kerler 2017-2018, licensed under MIT license
 
 import os
@@ -13,7 +14,8 @@ keys=[
         "D6DCCF0AD5ACD4E0292E522DB7C1381E", #R9s, Plus, R11
         "12341EAAC4C123CE193556A1BBCC232D",
         "D4D2CD61D4AFDCE13B5E01221BD14D20", #FindX
-        "261CC7131D7C1481294E532DB752381E"  #FindX
+        "261CC7131D7C1481294E532DB752381E", #FindX
+        "172B3E14E46F3CE13E2B5121CBDC4321", #Realme 1
       ]
 
 def keytest(data):
