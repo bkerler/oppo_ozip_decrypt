@@ -18,13 +18,16 @@ keys=[
         "172B3E14E46F3CE13E2B5121CBDC4321", #Realme 1
       ]
 
+def aes_dec(key,data):
+    ctx=AES.new(binascii.unhexlify(key),AES.MODE_ECB)
+    return ctx.decrypt(data)
+
 def keytest(data):
     for key in keys:
-        ctx=AES.new(binascii.unhexlify(key),AES.MODE_ECB)
-        dat=ctx.decrypt(data)
+        dat=aes_dec(key,data)
         if (dat[0:4]==b'\x50\x4B\x03\x04'):
             print ("Found correct AES key: "+key)
-            return binascii.unhexlify(key)
+            return key
     return -1
 
 def main():
@@ -46,16 +49,17 @@ def main():
             exit(1)
         with open(sys.argv[1][:-4]+"zip",'wb') as wf:
             fr.seek(0x1050)
-            ctx = AES.new(key, AES.MODE_ECB)
+            print("Decrypting...")
             while (True):
                 data=fr.read(16)
                 if len(data)==0:
                     break
-                wf.write(ctx.decrypt(data))
+                wf.write(aes_dec(key,data))
                 data = fr.read(0x4000)
                 if len(data)==0:
                     break
                 wf.write(data)
+            print("DONE!!")
 
 if __name__ == '__main__':
     main()
