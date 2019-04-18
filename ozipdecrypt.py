@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#(c) B. Kerler 2017-2018, licensed under MIT license
+#(c) B. Kerler 2017-2019, licensed under MIT license
 
 import os
 import sys
@@ -24,17 +24,20 @@ keys=[
         "D7DBCE2AD4ADDCE1393E5521CBDC4321", #Realme 2 pro
       ]
 
+def aes_dec(key,data):
+    ctx=AES.new(binascii.unhexlify(key),AES.MODE_ECB)
+    return ctx.decrypt(data)
+    
 def keytest(data):
     for key in keys:
-        ctx=AES.new(binascii.unhexlify(key),AES.MODE_ECB)
-        dat=ctx.decrypt(data)
+        dat=aes_dec(key,data)
         if (dat[0:4]==b'\x50\x4B\x03\x04'):
             print ("Found correct AES key: "+key)
             return binascii.unhexlify(key)
     return -1
 
 def main():
-    print ("ozipdecrypt 0.2 (c) B.Kerler 2017-2018")
+    print ("ozipdecrypt 0.3 (c) B.Kerler 2017-2019")
     if (len(sys.argv)!=2):
         print ("usage: ozipdecrypt.py [*.ozip]")
         exit(1)
@@ -52,16 +55,17 @@ def main():
             exit(1)
         with open(sys.argv[1][:-4]+"zip",'wb') as wf:
             fr.seek(0x1050)
-            ctx = AES.new(key, AES.MODE_ECB)
+            print("Decrypting...")
             while (True):
                 data=fr.read(16)
                 if len(data)==0:
                     break
-                wf.write(ctx.decrypt(data))
+                wf.write(dat=aes_dec(key,data))
                 data = fr.read(0x4000)
                 if len(data)==0:
                     break
                 wf.write(data)
+            print("DONE!!")
 
 if __name__ == '__main__':
     main()
