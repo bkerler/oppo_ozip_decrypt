@@ -60,7 +60,7 @@ def main():
                 data=fr.read(16)
                 if len(data)==0:
                     break
-                wf.write(dat=aes_dec(key,data))
+                wf.write(aes_dec(key,data))
                 data = fr.read(0x4000)
                 if len(data)==0:
                     break
