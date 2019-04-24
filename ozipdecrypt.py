@@ -24,13 +24,11 @@ keys=[
         "D7DBCE2AD4ADDCE1393E5521CBDC4321", #Realme 2 pro
       ]
 
-def aes_dec(key,data):
-    ctx=AES.new(binascii.unhexlify(key),AES.MODE_ECB)
-    return ctx.decrypt(data)
-    
+   
 def keytest(data):
     for key in keys:
-        dat=aes_dec(key,data)
+        ctx=AES.new(binascii.unhexlify(key),AES.MODE_ECB)
+        dat=ctx.decrypt(data)
         if (dat[0:4]==b'\x50\x4B\x03\x04'):
             print ("Found correct AES key: "+key)
             return binascii.unhexlify(key)
@@ -53,6 +51,7 @@ def main():
         if (key==-1):
             print("Unknown AES key, reverse key from recovery first!")
             exit(1)
+        ctx=AES.new(key,AES.MODE_ECB)
         with open(sys.argv[1][:-4]+"zip",'wb') as wf:
             fr.seek(0x1050)
             print("Decrypting...")
@@ -60,7 +59,7 @@ def main():
                 data=fr.read(16)
                 if len(data)==0:
                     break
-                wf.write(aes_dec(key,data))
+                wf.write(ctx.decrypt(data))
                 data = fr.read(0x4000)
                 if len(data)==0:
                     break
