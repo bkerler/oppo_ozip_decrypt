@@ -27,4 +27,4 @@ Share, modify and use as you like, but refer the original author !
 
 Tutorial:
 ---------
-For a tutorial on aes key extraction, head over [here](https://bkerler.github.io/2019/04/the-game-begins/).
+For a tutorial on aes key extraction, head over [here](https://bkerler.github.io/reversing/2019/04/24/the-game-begins/).
