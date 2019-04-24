@@ -24,3 +24,7 @@ File will be output as .zip
 License:
 -------- 
 Share, modify and use as you like, but refer the original author !
+
+Tutorial:
+---------
+For a tutorial on aes key extraction, head over [here](https://bkerler.github.io/2019/04/the-game-begins/).
