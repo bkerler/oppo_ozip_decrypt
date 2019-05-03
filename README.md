@@ -28,3 +28,7 @@ Share, modify and use as you like, but refer the original author !
 Tutorial:
 ---------
 For a tutorial on aes key extraction, head over [here](https://bkerler.github.io/reversing/2019/04/24/the-game-begins/).
+
+For extraction of libpatchapply.so or /sbin/recovery, use:
+'./ofp_libextract.y [your_ofp_file]'
+If you're getting a recovery.cpio.7z file, extract using 7z to get the /sbin/recovery file.
