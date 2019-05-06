@@ -19,6 +19,7 @@ keys=[
         "1CA21E12271335AE33AB81B2A7B14622", #Realme 2 pro
         "acaa1e12a71431ce4a1b21bba1c1c6a2", #Realme U1 RMX1831
         "acac1e13a72531ae4a1b22bb31c1cc22", #Realme 3 RMX1825EX
+        "1c4c1ea3a12531ae491b21bb31613c11", #Realme 3 Pro
         "D6EECF0AE5ACD4E0E9FE522DE7CE381E", #mnkey
         "D6ECCF0AE5ACD4E0E92E522DE7C1381E", #mkey
         "D6DCCF0AD5ACD4E0292E522DB7C1381E", #realkey
