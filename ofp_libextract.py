@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# (c) B.Kerler, MIT license
 import os
 import sys
 from struct import unpack
@@ -79,10 +80,11 @@ def seekforrecovery(rf):
             old=percent
             print(f"{percent}% scanned.")
         data=rf.read(0x20004)
-        idx=data.find(b"\x1F\x8B\x08\x00\x00\x00\x00\x00\x00")
+        idx=0
+        idx=data.find(b"\x1F\x8B\x08\x00\x00\x00\x00\x00\x00",idx)
         if idx!=-1:
             found+=1
-            if found==2:
+            if found>1:
                 print(f"Found a possible candidate at: {hex(pos+idx)}")
                 pos=pos+idx
                 pos2=pos
@@ -98,12 +100,10 @@ def seekforrecovery(rf):
                         print(f"Extracting recovery: {hex(pos)}, Length:{hex(pos2+idx2-pos)} as recovery.cpio.gz")
                         rf.seek(pos)
                         data=rf.read(pos2+idx2-pos)
-                        with open(f"recovery.cpio.gz","wb") as wf:
+                        with open(f"recovery{str(found-1)}.cpio.gz","wb") as wf:
                             wf.write(data)
-                        break
+                        break;
                     pos2+=0x20000
-        if found==2:
-            break
         pos+=0x20000
     return area
 
