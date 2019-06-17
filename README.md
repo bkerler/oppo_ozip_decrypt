@@ -11,15 +11,19 @@ Based on python 3.6
 
 Prerequirement:
 -------------
-'pip install pycrypto'
+'pip3 install pycrypto' or
+'pip3 install pycryptodome'
 
 
 Usage:
 -------- 
 * OTA OZIP decryption:
-'python ozipdecrypt.py CPH1707EX_OTA_0070_all.ozip'
+'python3 ozipdecrypt.py CPH1707EX_OTA_0070_all.ozip'
 
-File will be output as .zip
+* OTA Boot.img decryption:
+'python3 ozipdecrypt.py boot.img'
+
+File will be output as .zip or boot.img
 
 License:
 -------- 
