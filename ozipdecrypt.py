@@ -59,18 +59,37 @@ def main():
             print("Unknown AES key, reverse key from recovery first!")
             exit(1)
         ctx=AES.new(key,AES.MODE_ECB)
-        with open(sys.argv[1][:-4]+"zip",'wb') as wf:
-            fr.seek(0x1050)
-            print("Decrypting...")
-            while (True):
-                data=fr.read(16)
-                if len(data)==0:
-                    break
-                wf.write(ctx.decrypt(data))
-                data = fr.read(0x4000)
-                if len(data)==0:
-                    break
-                wf.write(data)
+        if ".zip" not in sys.argv[1]:
+            filename=sys.argv[1]+".dec"
+            with open(filename,'wb') as wf:
+                fr.seek(0x1050)
+                print("Decrypting...")
+                flen=os.stat(sys.argv[1]).st_size
+                while (flen>0):
+                    if flen>0x4000:
+                    	size=0x4000
+                    else:
+                    	size=flen
+                    data = fr.read(size)
+                    if len(data)==0:
+                        break
+                    wf.write(ctx.decrypt(data))
+                    flen-=size
+            print("DONE!!")
+        else:
+            filename=sys.argv[1][:-4]+"zip"
+            with open(filename,'wb') as wf:
+                fr.seek(0x1050)
+                print("Decrypting...")
+                while (True):
+                    data=fr.read(16)
+                    if len(data)==0:
+                        break
+                    wf.write(ctx.decrypt(data))
+                    data = fr.read(0x4000)
+                    if len(data)==0:
+                        break
+                    wf.write(data)
             print("DONE!!")
 
 if __name__ == '__main__':
