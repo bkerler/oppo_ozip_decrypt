@@ -36,10 +36,13 @@ def keytest(data):
         if (dat[0:4]==b'\x50\x4B\x03\x04'):
             print ("Found correct AES key: "+key)
             return binascii.unhexlify(key)
+        elif (dat[0:4]==b'\x41\x4E\x44\x52'):
+            print ("Found correct AES key: "+key)
+            return binascii.unhexlify(key)
     return -1
 
 def main():
-    print ("ozipdecrypt 0.3 (c) B.Kerler 2017-2019")
+    print ("ozipdecrypt 0.4 (c) B.Kerler 2017-2019")
     if (len(sys.argv)!=2):
         print ("usage: ozipdecrypt.py [*.ozip]")
         exit(1)
