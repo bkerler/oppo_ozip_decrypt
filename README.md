@@ -23,7 +23,7 @@ Usage:
 * OTA Boot.img decryption:
 'python3 ozipdecrypt.py boot.img'
 
-File will be output as .zip or boot.img
+File will be decrypted as *.zip or boot.img.dec
 
 License:
 -------- 
