@@ -107,12 +107,12 @@ def main():
                 for r, d, f in os.walk('temp'):
                     for file in f:
                         rfilename=os.path.join(r, file)
-                        wfilename = "out/" + rfilename[rfilename.rfind('/') + 1:]
+                        wfilename = os.path.join("out", rfilename[rfilename.rfind('/') + 1:])
                         with open(rfilename,'rb') as rr:
                             magic = rr.read(12)
                             if (magic == b"OPPOENCRYPT!"):
                                 if testkey==True:
-                                    with open("temp/boot.img","rb") as rt:
+                                    with open(os.path.join("temp","boot.img"),"rb") as rt:
                                         rt.seek(0x1050)
                                         data=rt.read(16)
                                         key=keytest(data)
