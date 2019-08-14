@@ -30,6 +30,7 @@ keys=[
         "D7DCCE1AD4AFDCE2393E5161CBDC4321", #testkey
         "D7DBCE2AD4ADDCE1393E5521CBDC4321", #utilkey
         "12cac11211aac3aea2658690122c1e81", #A1,A83t
+        "1c4c1ea3a12531ae491b21bb31613c11", #Realme X
       ]
 
    
