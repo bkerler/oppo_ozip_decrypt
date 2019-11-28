@@ -34,6 +34,7 @@ keys=[
         "D7DBCE2AD4ADDCE1393E5521CBDC4321", #utilkey
         "12cac11211aac3aea2658690122c1e81", #A1,A83t
         "2442CE821A4F352E33AE81B22BC1462E", #R17 Pro
+        "1c4a11a3a12589ae441a23bb31517733", #Realme X2
       ]
 
    
