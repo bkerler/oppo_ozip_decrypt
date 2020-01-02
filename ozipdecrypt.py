@@ -21,7 +21,7 @@ keys=[
         "1CA21E12271335AE33AB81B2A7B14622", #Realme 2 pro
         "acaa1e12a71431ce4a1b21bba1c1c6a2", #Realme U1 RMX1831
         "acac1e13a72531ae4a1b22bb31c1cc22", #Realme 3 RMX1825EX
-        "1c4c1ea3a12531ae491b21bb31613c11", #Realme 3 Pro, Realme X
+        "1c4c1ea3a12531ae491b21bb31613c11", #Realme 3 Pro, X, 5 Pro, Q
         "1C4A11A3A22513AE541B53BB31513121", #Realme 5
         "D4D2CE11D4AFDCE13B3E0121CBD14D20", #K1
         "ACAC1E13A12531AE4A1B21BB31C13C21", #Reno, K3
