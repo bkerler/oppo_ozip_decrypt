@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 # (c) B. Kerler 2017-2020, licensed under MIT license
+"""
+Usage:
+    ozipdecrypt.py --help
+    ozipdecrypt.py <filename> [--mode=value]
+
+Options:
+    --mode=value                  Mode 1 for regular ozip, Mode 2 for CPH1803/CPH1909 [default: 1]
+"""
+
+from docopt import docopt
+args = docopt(__doc__, version='1.2')
+
 
 import os
 import sys, stat
@@ -21,7 +33,7 @@ keys = [
     "1CA21E12271335AE33AB81B2A7B14622",  # Realme 2 pro
     "acaa1e12a71431ce4a1b21bba1c1c6a2",  # Realme U1 RMX1831
     "acac1e13a72531ae4a1b22bb31c1cc22",  # Realme 3 RMX1825EX
-    "1c4c1ea3a12531ae491b21bb31613c11",  # Realme 3 Pro, X, 5 Pro, Q
+    "1c4c1ea3a12531ae491b21bb31613c11",  # Realme 3 Pro, X, 5 Pro, Q, RMX1921 Realme XT
     "1c4411a3a12533ae441b21bb31613c11",  # A1k CPH1923
     "1C4A11A3A22513AE541B53BB31513121",  # Realme 5
     "D4D2CE11D4AFDCE13B3E0121CBD14D20",  # K1
@@ -37,6 +49,8 @@ keys = [
     "12cac11211aac3aea2658690122c1e81",  # A1,A83t
     "2442CE821A4F352E33AE81B22BC1462E",  # R17 Pro
     "1c4a11a3a12589ae441a23bb31517733",  # Realme X2
+    "14C2CD6214CFDC2733AE81B22BC1462C",  # CPH1803 OppoA3s
+    "1CA21E12271435AE331B81BBA7C14612",  # CPH1909 OppoA5s
 ]
 
 
@@ -68,96 +82,142 @@ def rmrf(path):
 
 def main():
     print("ozipdecrypt 0.5 (c) B.Kerler 2017-2019")
-    if (len(sys.argv) != 2):
-        print("usage: ozipdecrypt.py [*.ozip]")
-        exit(1)
-
-    with open(sys.argv[1], 'rb') as fr:
-        magic = fr.read(12)
-        if (magic == b"OPPOENCRYPT!"):
-            pk = False
-        elif magic[:2] == b"PK":
-            pk = True
-        else:
-            print("ozip has unknown magic, OPPOENCRYPT! expected !")
-            exit(1)
-
-        if pk == False:
-            fr.seek(0x1050)
-            data = fr.read(16)
-            key = keytest(data)
-            if (key == -1):
-                print("Unknown AES key, reverse key from recovery first!")
+    filename=args["<filename>"]
+    mode=int(args["--mode"])
+    if mode==1:
+        with open(filename, 'rb') as fr:
+            magic = fr.read(12)
+            if (magic == b"OPPOENCRYPT!"):
+                pk = False
+            elif magic[:2] == b"PK":
+                pk = True
+            else:
+                print("ozip has unknown magic, OPPOENCRYPT! expected !")
                 exit(1)
-            ctx = AES.new(key, AES.MODE_ECB)
-            filename = sys.argv[1][:-4] + "zip"
-            with open(filename, 'wb') as wf:
-                fr.seek(0x1050)
-                print("Decrypting...")
-                while (True):
-                    data = fr.read(16)
-                    if len(data) == 0:
-                        break
-                    wf.write(ctx.decrypt(data))
-                    data = fr.read(0x4000)
-                    if len(data) == 0:
-                        break
-                    wf.write(data)
-            print("DONE!!")
-        else:
-            testkey = True
-            with ZipFile(sys.argv[1], 'r') as zipObj:
-                if os.path.exists('temp'):
-                    rmrf('temp')
-                os.mkdir('temp')
-                if os.path.exists('out'):
-                    rmrf('out')
-                os.mkdir('out')
-                print("Extracting " + sys.argv[1])
-                zipObj.extractall('temp')
-                for r, d, f in os.walk('temp'):
-                    for file in f:
-                        rfilename = os.path.join(r, file)
-                        rbfilename = os.path.basename(rfilename)
-                        wfilename = os.path.join("out", rbfilename)
-                        with open(rfilename, 'rb') as rr:
-                            magic = rr.read(12)
-                            if (magic == b"OPPOENCRYPT!"):
-                                if testkey == True:
-                                    with open(os.path.join("temp", "boot.img"), "rb") as rt:
-                                        rt.seek(0x1050)
-                                        data = rt.read(16)
-                                        key = keytest(data)
-                                        if (key == -1):
-                                            print("Unknown AES key, reverse key from recovery first!")
-                                            exit(1)
-                                    testkey = False
-                                with open(wfilename, 'wb') as wf:
-                                    rr.seek(0x10)
-                                    dsize = int(rr.read(0x10).replace(b"\x00", b"").decode('utf-8'), 10)
-                                    rr.seek(0x1050)
-                                    print("Decrypting " + rfilename)
-                                    flen = os.stat(rfilename).st_size - 0x1050
 
-                                    ctx = AES.new(key, AES.MODE_ECB)
-                                    while (dsize > 0):
-                                        if flen > 0x4000:
-                                            size = 0x4000
-                                        else:
-                                            size = flen
-                                        data = rr.read(size)
-                                        if dsize < size:
-                                            size = dsize
-                                        if len(data) == 0:
-                                            break
-                                        dr = ctx.decrypt(data)
-                                        wf.write(dr[:size])
-                                        flen -= size
-                                        dsize -= size
-                            else:
-                                shutil.move(rfilename, wfilename)
-                rmrf('temp')
-                print("DONE ... files decrypted to the \"out\" directory !!")
+            if pk == False:
+                fr.seek(0x1050)
+                data = fr.read(16)
+                key = keytest(data)
+                if (key == -1):
+                    print("Unknown AES key, reverse key from recovery first!")
+                    exit(1)
+                ctx = AES.new(key, AES.MODE_ECB)
+                filename = sys.argv[1][:-4] + "zip"
+                with open(filename, 'wb') as wf:
+                    fr.seek(0x1050)
+                    print("Decrypting...")
+                    while (True):
+                        data = fr.read(16)
+                        if len(data) == 0:
+                            break
+                        wf.write(ctx.decrypt(data))
+                        data = fr.read(0x4000)
+                        if len(data) == 0:
+                            break
+                        wf.write(data)
+                print("DONE!!")
+            else:
+                testkey = True
+                with ZipFile(sys.argv[1], 'r') as zipObj:
+                    if os.path.exists('temp'):
+                        rmrf('temp')
+                    os.mkdir('temp')
+                    if os.path.exists('out'):
+                        rmrf('out')
+                    os.mkdir('out')
+                    print("Extracting " + sys.argv[1])
+                    zipObj.extractall('temp')
+                    for r, d, f in os.walk('temp'):
+                        for file in f:
+                            rfilename = os.path.join(r, file)
+                            rbfilename = os.path.basename(rfilename)
+                            wfilename = os.path.join("out", rbfilename)
+                            with open(rfilename, 'rb') as rr:
+                                magic = rr.read(12)
+                                if (magic == b"OPPOENCRYPT!"):
+                                    if testkey == True:
+                                        with open(os.path.join("temp", "boot.img"), "rb") as rt:
+                                            rt.seek(0x1050)
+                                            data = rt.read(16)
+                                            key = keytest(data)
+                                            if (key == -1):
+                                                print("Unknown AES key, reverse key from recovery first!")
+                                                exit(1)
+                                        testkey = False
+                                    with open(wfilename, 'wb') as wf:
+                                        rr.seek(0x10)
+                                        dsize = int(rr.read(0x10).replace(b"\x00", b"").decode('utf-8'), 10)
+                                        rr.seek(0x1050)
+                                        print("Decrypting " + rfilename)
+                                        flen = os.stat(rfilename).st_size - 0x1050
+
+                                        ctx = AES.new(key, AES.MODE_ECB)
+                                        while (dsize > 0):
+                                            if flen > 0x4000:
+                                                size = 0x4000
+                                            else:
+                                                size = flen
+                                            data = rr.read(size)
+                                            if dsize < size:
+                                                size = dsize
+                                            if len(data) == 0:
+                                                break
+                                            dr = ctx.decrypt(data)
+                                            wf.write(dr[:size])
+                                            flen -= size
+                                            dsize -= size
+                                else:
+                                    shutil.move(rfilename, wfilename)
+                    rmrf('temp')
+                    print("DONE ... files decrypted to the \"out\" directory !!")
+    elif mode==2:
+        with open(filename, 'rb') as fr:
+            magic = fr.read(12)
+            if magic[:2] == b"PK":
+                testkey = True
+                with ZipFile(sys.argv[1], 'r') as zipObj:
+                    if os.path.exists('temp'):
+                        rmrf('temp')
+                    os.mkdir('temp')
+                    if os.path.exists('out'):
+                        rmrf('out')
+                    os.mkdir('out')
+                    print("Extracting " + sys.argv[1])
+                    zipObj.extractall('temp')
+                    for r, d, f in os.walk('temp'):
+                        for file in f:
+                            rfilename = os.path.join(r, file)
+                            rbfilename = os.path.basename(rfilename)
+                            wfilename = os.path.join("out", rbfilename)
+                            with open(rfilename, 'rb') as rr:
+                                magic = rr.read(12)
+                                if (magic == b"OPPOENCRYPT!"):
+                                    if testkey == True:
+                                        with open(os.path.join("temp", "boot.img"), "rb") as rt:
+                                            rt.seek(0x50)
+                                            data = rt.read(16)
+                                            key = keytest(data)
+                                            if (key == -1):
+                                                print("Unknown AES key, reverse key from recovery first!")
+                                                exit(1)
+                                        testkey = False
+                                    with open(wfilename, 'wb') as wf:
+                                        print("Decrypting " + rfilename)
+                                        rr.seek(0x50)
+                                        data=bytearray(rr.read())
+                                        ctx = AES.new(key, AES.MODE_ECB)
+                                        data[0:16] = ctx.decrypt(data[0:16])
+                                        data[0x4050:0x4050+16] = ctx.decrypt(data[0x4050:0x4050+16])
+                                        wf.write(data)
+                                else:
+                                    shutil.move(rfilename, wfilename)
+                    rmrf('temp')
+                    print("DONE ... files decrypted to the \"out\" directory !!")
+            else:
+                print("ozip has unknown magic, OPPOENCRYPT! expected !")
+                exit(1)
+
 
 
 if __name__ == '__main__':
