@@ -32,7 +32,7 @@ keys = [
     "261CC7131D7C1481294E532DB752381E",  # FindX
     "1CA21E12271335AE33AB81B2A7B14622",  # Realme 2 pro SDM660/MSM8976
     "D4D2CE11D4AFDCE13B3E0121CBD14D20",  # K1 SDM660/MSM8976
-    "D6DCCF0AD5ACD4E0292E522DB7C1381E",  # RMX1921 Realme XT Android 10
+    "D6DCCF0AD5ACD4E0292E522DB7C1381E",  # RMX1921 Realme XT, RMX1851EX Realme Android 10
     "1c4c1ea3a12531ae491b21bb31613c11",  # Realme 3 Pro SDM710, X, 5 Pro, Q, RMX1921 Realme XT
     "1c4c1ea3a12531ae4a1b21bb31c13c21",  # Reno 10x zoom PCCM00 SDM855, CPH1921EX Reno 5G
     "1c4a11a3a12513ae441B23BB31513121",  # Reno 2 PCKM00 SDM730G
@@ -161,9 +161,14 @@ def main():
                             for line in rt:
                                 clist.append(line[:-1])
                     if testkey:
+                        fname=''
                         if "firmware-update/vbmeta.img" in clist:
-                            if zo.extract('firmware-update/vbmeta.img', outpath):
-                                with open(os.path.join(outpath, "firmware-update", "vbmeta.img"), "rb") as rt:
+                            fname=os.path.join('firmware-update','vbmeta.img')
+                        elif "vbmeta.img" in clist:
+                            fname = 'vbmeta.img'
+                        if fname!='':
+                            if zo.extract(fname, outpath):
+                                with open(os.path.join(outpath, fname), "rb") as rt:
                                     rt.seek(0x1050)
                                     data = rt.read(16)
                                     key = keytest(data)
