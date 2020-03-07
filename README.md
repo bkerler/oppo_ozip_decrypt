@@ -24,13 +24,6 @@ Usage:
 ./ozipdecrypt.py CPH1707EX_OTA_0070_all.ozip
 ```
 
-* CPH1803/CPH1909 decryption:
-
-```
-./ozipdecrypt.py CPH1803EX_OTA_0070_all.zip --mode=2
-```
-
-
 File will be decrypted as *.zip or boot.img.dec
 
 License:
@@ -44,7 +37,7 @@ For a tutorial on aes key extraction, head over [here](https://bkerler.github.io
 For extraction of libpatchapply.so or /sbin/recovery, use:
 
 ```
-./ofp_libextract.y [your_ofp_file]
+./ofp_libextract.py [your_ofp_file]
 ```
 
 If you're getting a recovery.cpio.7z file, extract using 7z to get the /sbin/recovery file.
