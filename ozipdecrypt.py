@@ -51,11 +51,10 @@ keys = [
     "ACAC1E13A72431AE4A1B22BBA1C1C6A2",  # A9
     "12cac11211aac3aea2658690122c1e81",  # A1,A83t
     "1CA21E12271435AE331B81BBA7C14612",  # CPH1909 OppoA5s MT6765
-    #F3 Plus CPH1613 - MSM8976
     "D1DACF24351CE428A9CE32ED87323216",#Realme1(reserved)
     "A1CC75115CAECB890E4A563CA1AC67C8",#A73(reserved)
     "2132321EA2CA86621A11241ABA512722",#Realme3(reserved)
-
+    #F3 Plus CPH1613 - MSM8976
 ]
 
 
@@ -115,29 +114,31 @@ def decryptfile(key, rfilename):
     os.rename(rfilename+".tmp",rfilename)
 
 def mode2(filename):
+    temp=os.path.join(os.path.abspath(os.path.basename(filename)),"temp")
+    out=os.path.join(os.path.abspath(os.path.basename(filename)), "out")
     with open(filename, 'rb') as fr:
         magic = fr.read(12)
         if magic[:2] == b"PK":
             testkey = True
             with ZipFile(sys.argv[1], 'r') as zipObj:
-                if os.path.exists('temp'):
-                    rmrf('temp')
-                os.mkdir('temp')
-                if os.path.exists('out'):
-                    rmrf('out')
-                os.mkdir('out')
+                if os.path.exists(temp):
+                    rmrf(temp)
+                os.mkdir(temp)
+                if os.path.exists(out):
+                    rmrf(out)
+                os.mkdir(out)
                 print("Extracting " + sys.argv[1])
-                zipObj.extractall('temp')
-                for r, d, f in os.walk('temp'):
+                zipObj.extractall(temp)
+                for r, d, f in os.walk(temp):
                     for file in f:
                         rfilename = os.path.join(r, file)
                         rbfilename = os.path.basename(rfilename)
-                        wfilename = os.path.join("out", rbfilename)
+                        wfilename = os.path.join(out, rbfilename)
                         with open(rfilename, 'rb') as rr:
                             magic = rr.read(12)
                             if (magic == b"OPPOENCRYPT!"):
                                 if testkey == True:
-                                    with open(os.path.join("temp", "boot.img"), "rb") as rt:
+                                    with open(os.path.join(temp, "boot.img"), "rb") as rt:
                                         rt.seek(0x50)
                                         data = rt.read(16)
                                         key = keytest(data)
@@ -155,8 +156,8 @@ def mode2(filename):
                                     wf.write(data)
                             else:
                                 shutil.move(rfilename, wfilename)
-                rmrf('temp')
-                print("DONE ... files decrypted to the \"out\" directory !!")
+                rmrf(temp)
+                print("DONE ... files decrypted to :" + out)
 
 def main():
     print("ozipdecrypt 1.1 (c) B.Kerler 2017-2020")
@@ -195,8 +196,8 @@ def main():
             print("DONE!!")
         else:
             testkey = True
-            filename = sys.argv[1]
-            path = os.path.dirname(filename)
+            filename = os.path.abspath(sys.argv[1])
+            path = os.path.abspath(os.path.dirname(filename))
             outpath = os.path.join(path, "out")
             if os.path.exists(outpath):
                 shutil.rmtree(outpath)
@@ -215,12 +216,13 @@ def main():
                 if testkey:
                     fname = ''
                     if "firmware-update/vbmeta.img" in clist:
-                        fname = os.path.join('firmware-update', 'vbmeta.img')
+                        fname = "firmware-update/vbmeta.img"
+                        #fname = os.path.join('firmware-update', 'vbmeta.img')
                     elif "vbmeta.img" in clist:
                         fname = 'vbmeta.img'
                     if fname != '':
                         if zo.extract(fname, outpath):
-                            with open(os.path.join(outpath, fname), "rb") as rt:
+                            with open(os.path.join(outpath, fname.replace("/", os.sep)), "rb") as rt:
                                 rt.seek(0x1050)
                                 data = rt.read(16)
                                 key = keytest(data)
