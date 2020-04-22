@@ -114,8 +114,8 @@ def decryptfile(key, rfilename):
     os.rename(rfilename+".tmp",rfilename)
 
 def mode2(filename):
-    temp=os.path.join(os.path.abspath(os.path.basename(filename)),"temp")
-    out=os.path.join(os.path.abspath(os.path.basename(filename)), "out")
+    temp=os.path.join(os.path.abspath(os.path.dirname(filename)), "temp")
+    out=os.path.join(os.path.abspath(os.path.dirname(filename)), "out")
     with open(filename, 'rb') as fr:
         magic = fr.read(12)
         if magic[:2] == b"PK":
@@ -129,14 +129,20 @@ def mode2(filename):
                 os.mkdir(out)
                 print("Extracting " + sys.argv[1])
                 zipObj.extractall(temp)
+                tmplen = len(temp)
                 for r, d, f in os.walk(temp):
                     for file in f:
                         rfilename = os.path.join(r, file)
-                        rbfilename = os.path.basename(rfilename)
-                        wfilename = os.path.join(out, rbfilename)
+                        relativefilename = rfilename[tmplen + 1 :]
+                        wfilename = os.path.join(out, relativefilename)
+                        wdirname = os.path.dirname(wfilename)
+                        if not os.path.exists(wdirname):
+                            os.makedirs(wdirname)
+                        encrypted = False
                         with open(rfilename, 'rb') as rr:
                             magic = rr.read(12)
                             if (magic == b"OPPOENCRYPT!"):
+                                encrypted = True
                                 if testkey == True:
                                     with open(os.path.join(temp, "boot.img"), "rb") as rt:
                                         rt.seek(0x50)
@@ -154,10 +160,10 @@ def mode2(filename):
                                     data[0:16] = ctx.decrypt(data[0:16])
                                     data[0x4050:0x4050 + 16] = ctx.decrypt(data[0x4050:0x4050 + 16])
                                     wf.write(data)
-                            else:
-                                shutil.move(rfilename, wfilename)
+                        if not encrypted:
+                            shutil.move(rfilename, wfilename)
                 rmrf(temp)
-                print("DONE ... files decrypted to :" + out)
+                print("DONE... files decrypted to: " + out)
 
 def main():
     print("ozipdecrypt 1.1 (c) B.Kerler 2017-2020")
@@ -169,7 +175,7 @@ def main():
         elif magic[:2] == b"PK":
             pk = True
         else:
-            print("ozip has unknown magic, OPPOENCRYPT! expected !")
+            print("ozip has unknown magic, OPPOENCRYPT! expected!")
             exit(1)
 
         if pk == False:
@@ -231,7 +237,7 @@ def main():
                                     exit(1)
                             testkey = False
                     if testkey == True:
-                        print("Unknown image, please report an issue with image name !")
+                        print("Unknown image, please report an issue with image name!")
                         exit(0)
 
                 for info in zo.infolist():
@@ -249,7 +255,7 @@ def main():
                             magic = rr.read(12)
                         if (magic == b"OPPOENCRYPT!"):
                             decryptfile(key, outfile)
-                print("DONE ... files decrypted to :" + outpath)
+                print("DONE... files decrypted to: " + outpath)
 
 if __name__ == '__main__':
     main()
