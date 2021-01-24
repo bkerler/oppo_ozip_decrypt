@@ -2,12 +2,9 @@
 Oppo/Oneplus .ozip Firmware decrypter
 ------------------------------------
 
-Tested with CPH1707EX, CPH1611EX OTA Zip and Python 3.6
+Tested with CPH1707EX, CPH1611EX OTA Zip and Python >= 3.6
 
 * ozipdecrypt.py : Decrypt Oppo .ozip to .zip
-* decrypt.py  : Decrypts any part of the firmware
-
-Based on python >=3.6
 
 Prerequirement:
 -------------
@@ -24,7 +21,7 @@ Usage:
 ./ozipdecrypt.py CPH1707EX_OTA_0070_all.ozip
 ```
 
-File will be decrypted as *.zip or boot.img.dec
+File will be decrypted as *.zip
 
 License:
 -------- 
