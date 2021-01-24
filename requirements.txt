@@ -1,3 +1,1 @@
 pycryptodome
-docopt
-
