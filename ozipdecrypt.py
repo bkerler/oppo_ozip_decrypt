@@ -175,14 +175,14 @@ def main(file_arg):
                                     rr.seek(0x50)
                                     data = rr.read(16)
                                     key = keytest(data)
-                                    if (key == -1):
+                                    if key == -1:
                                         print("Unknown AES key, reverse key from recovery first!")
                                         return 1
                                     else:
                                         break
                                 else:
                                     print("Unknown mode2, boot.img wasn't encrypted")
-                                    return 1
+                                    break
 
                     print("Extracting...  " + file_arg)
                     outzip = filename[:-4] + 'zip'
@@ -210,11 +210,11 @@ def main(file_arg):
                     print("DONE... file decrypted to: "+outzip)
                     return 0
 
-    print("ozipdecrypt 1.3 (c) B.Kerler 2017-2021")
+    print("ozipdecrypt 1.31 (c) B.Kerler 2017-2021")
     filename = file_arg
     with open(filename, 'rb') as fr:
         magic = fr.read(12)
-        if (magic == b"OPPOENCRYPT!"):
+        if magic == b"OPPOENCRYPT!":
             pk = False
         elif magic[:2] == b"PK":
             pk = True
@@ -259,7 +259,8 @@ def main(file_arg):
                         with open(os.path.join(outpath, 'oppo_metadata')) as rt:
                             for line in rt:
                                 clist.append(line[:-1])
-                except:
+                except Exception as e:
+                    print(str(e))
                     print("Detected mode 2....")
                     return mode2(filename)
                 if testkey:
