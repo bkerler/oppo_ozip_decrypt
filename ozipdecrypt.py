@@ -113,6 +113,7 @@ def main(file_arg):
         os.remove(rfilename)
         os.rename(rfilename+".tmp",rfilename)
 
+
     def decryptfile2(key, rfilename, wfilename):
         with open(rfilename,'rb') as rr:
             with open(wfilename, 'wb') as wf:
@@ -210,7 +211,7 @@ def main(file_arg):
                     print("DONE... file decrypted to: "+outzip)
                     return 0
 
-    print("ozipdecrypt 1.31 (c) B.Kerler 2017-2021")
+    print("ozipdecrypt 1.32 (c) B.Kerler 2017-2022")
     filename = file_arg
     with open(filename, 'rb') as fr:
         magic = fr.read(12)
@@ -294,13 +295,12 @@ def main(file_arg):
                         if len(clist) > 0:
                             if info.filename in clist:
                                 decryptfile(key, os.path.join(outpath,"out"))
-                                WzipObj.write(os.path.join(outpath, "out"), orgfilename)
                         else:
                             with open(os.path.join(outpath,"out"), 'rb') as rr:
                                 magic = rr.read(12)
                             if magic == b"OPPOENCRYPT!":
                                 decryptfile(key, os.path.join(outpath,"out"))
-                                WzipObj.write(os.path.join(outpath, "out"), orgfilename)
+                        WzipObj.write(os.path.join(outpath, "out"), orgfilename)
                 print("DONE... files decrypted to: " + outzip)
                 return 0
 
