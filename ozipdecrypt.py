@@ -92,7 +92,6 @@ def main(file_arg):
                 rr.seek(0x10)
                 dsize = int(rr.read(0x10).replace(b"\x00", b"").decode('utf-8'), 10)
                 rr.seek(0x1050)
-                print("Decrypting " + rfilename)
                 flen = os.stat(rfilename).st_size - 0x1050
 
                 ctx = AES.new(key, AES.MODE_ECB)
@@ -294,13 +293,15 @@ def main(file_arg):
                         info.filename=orgfilename
                         if len(clist) > 0:
                             if info.filename in clist:
+                                print("Decrypting " + info.filename)
                                 decryptfile(key, os.path.join(outpath,"out"))
                         else:
                             with open(os.path.join(outpath,"out"), 'rb') as rr:
                                 magic = rr.read(12)
-                            if magic == b"OPPOENCRYPT!":
-                                decryptfile(key, os.path.join(outpath,"out"))
+                                if magic == b"OPPOENCRYPT!":
+                                    decryptfile(key, os.path.join(outpath,"out"))
                         WzipObj.write(os.path.join(outpath, "out"), orgfilename)
+                os.rmrf(os.path.join(outpath, "out"))
                 print("DONE... files decrypted to: " + outzip)
                 return 0
 
