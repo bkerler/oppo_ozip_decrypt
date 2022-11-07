@@ -301,7 +301,7 @@ def main(file_arg):
                                 if magic == b"OPPOENCRYPT!":
                                     decryptfile(key, os.path.join(outpath,"out"))
                         WzipObj.write(os.path.join(outpath, "out"), orgfilename)
-                os.rmrf(os.path.join(outpath, "out"))
+                rmrf(os.path.join(outpath, "out"))
                 print("DONE... files decrypted to: " + outzip)
                 return 0
 
